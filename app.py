@@ -33,16 +33,8 @@ def _bootstrap():
         from db.connection import init_sqlite
         init_sqlite()
     else:
-        # PostgreSQL: seed system_config if empty (schema.sql already has ON CONFLICT DO NOTHING)
-        try:
-            conn = get_conn()
-            cur = conn.cursor()
-            cur.execute("INSERT INTO system_config (key, value) VALUES ('results_announced', 'false') ON CONFLICT (key) DO NOTHING")
-            cur.execute("INSERT INTO system_config (key, value) VALUES ('quota', '50') ON CONFLICT (key) DO NOTHING")
-            conn.commit()
-            conn.close()
-        except Exception:
-            pass
+        from db.connection import init_postgres
+        init_postgres()
 
 _bootstrap()
 

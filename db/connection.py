@@ -123,4 +123,27 @@ else:
         psycopg2.extras.register_default_jsonb(conn)
         return conn
 
+    def init_postgres():
+        """Apply schema.sql to the PostgreSQL database (idempotent — safe to run on every startup)."""
+        schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
+        with open(schema_path) as f:
+            sql = f.read()
+
+        # Split into individual statements, strip comment-only chunks
+        statements = []
+        for chunk in sql.split(";"):
+            lines = [l for l in chunk.splitlines() if not l.strip().startswith("--")]
+            stmt = "\n".join(lines).strip()
+            if stmt:
+                statements.append(stmt)
+
+        conn = get_conn()
+        try:
+            cur = conn.cursor()
+            for stmt in statements:
+                cur.execute(stmt)
+            conn.commit()
+        finally:
+            conn.close()
+
 
