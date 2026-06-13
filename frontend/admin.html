@@ -726,7 +726,7 @@
   }
 
   async function apiFetchAdmin(path) {
-    const res  = await fetch("http://localhost:5000/api" + path, {
+    const res  = await fetch("/api" + path, {
       headers: { "Content-Type": "application/json", "X-Admin-View": "1" },
     });
     const data = await res.json();
