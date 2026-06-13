@@ -215,7 +215,7 @@ def admin_override(app_id):
             UPDATE results
             SET status_keputusan = %s, admin_override = %s, override_reason = %s
             WHERE application_id = %s
-        """, (status, 1 if USE_SQLITE else True, reason, app_id))
+        """, (status, True, reason, app_id))
 
         # If a qualified slot was freed, promote from waiting_list
         if status != "qualified":
@@ -381,7 +381,7 @@ def admin_import():
                     facts["pendapatan_ortu"], facts["jumlah_tanggungan"],
                     facts["tagihan_listrik"], facts["wattage_listrik"],
                     facts["ipk"], facts["status_ortu"], facts["pekerjaan_ortu"],
-                    1 if facts["bantuan_lain"] else 0, kondisi,
+                    facts["bantuan_lain"], kondisi,
                 ))
 
                 if USE_SQLITE:
@@ -401,7 +401,7 @@ def admin_import():
                     _json_val(result_r.skor_per_kategori),
                     _json_val(result_r.reasoning_trace),
                     "pending",
-                    1 if result_r.is_anomaly else 0,
+                    result_r.is_anomaly,
                     _json_val(result_r.anomaly_reasons),
                 ))
 

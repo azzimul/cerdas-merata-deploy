@@ -64,7 +64,7 @@ def apply():
             facts["pendapatan_ortu"], facts["jumlah_tanggungan"],
             facts["tagihan_listrik"], facts["wattage_listrik"],
             facts["ipk"], facts["status_ortu"], facts["pekerjaan_ortu"],
-            1 if facts["bantuan_lain"] else 0,
+            facts["bantuan_lain"],
             data.get("kondisi_khusus") or None,
         ))
 
@@ -86,7 +86,7 @@ def apply():
             _json_val(result.skor_per_kategori),
             _json_val(result.reasoning_trace),
             "pending",
-            1 if result.is_anomaly else 0,
+            result.is_anomaly,
             _json_val(result.anomaly_reasons),
         ))
         conn.commit()
