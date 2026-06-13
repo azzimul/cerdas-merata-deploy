@@ -31,7 +31,11 @@ def auth_register():
     token   = secrets.token_hex(32)
     expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
 
-    conn = get_conn()
+    try:
+        conn = get_conn()
+    except Exception as e:
+        return jsonify({"error": f"Database connection failed: {e}"}), 503
+
     try:
         cur = conn.cursor()
         # Check uniqueness
@@ -72,7 +76,11 @@ def auth_login():
     if not username or not password:
         return jsonify({"error": "Username and password are required."}), 400
 
-    conn = get_conn()
+    try:
+        conn = get_conn()
+    except Exception as e:
+        return jsonify({"error": f"Database connection failed: {e}"}), 503
+
     try:
         cur = conn.cursor()
         _execute(cur, "SELECT id, username, full_name, password_hash FROM users WHERE username = %s OR email = %s",
@@ -116,7 +124,10 @@ def auth_logout():
 
 @bp.get("/api/auth/me")
 def auth_me():
-    conn = get_conn()
+    try:
+        conn = get_conn()
+    except Exception as e:
+        return jsonify({"error": f"Database connection failed: {e}"}), 503
     try:
         user = _get_auth_user(conn)
         if not user:
